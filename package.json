@@ -9,5 +9,23 @@
   "dependencies": {
     "express": "^4.17.1",
     "sqlite3": "^5.0.2"
+  },
+  "bin": "server.js",
+  "pkg": {
+    "assets": [
+      "index.html",
+      "back.jpg",
+      "dj.png",
+      "playing.gif",
+      "mixxxdb.sqlite",
+      "native/**/*",
+      "node_modules/sqlite3/**/*"
+    ],
+    "targets": [
+      "node14-win-x64"
+    ],
+    "scripts": [
+      "server.js"
+    ]
   }
 }

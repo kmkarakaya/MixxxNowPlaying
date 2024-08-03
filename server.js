@@ -1,7 +1,10 @@
 const path = require('path');
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+const sqlite3 = require('sqlite3').verbose(); // Include sqlite3
+
 const app = express();
+const port = process.env.PORT || 3001; // Port number
 
 // Serve static files (e.g., images, CSS) from the directory where server.js is located
 app.use(express.static(__dirname));
@@ -16,7 +19,7 @@ const dbPath = process.env.MIXXX_DB_PATH
 
 if (!dbPath) {
     console.error('No database path provided via environment variable.');
-    process.exit(1); // Exit with an error code if no path is provided
+    process.exit(1);
 } else {
     console.log('Database path:', dbPath);
 }
@@ -24,41 +27,42 @@ if (!dbPath) {
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error opening database:', err.message);
+        process.exit(1);
     } else {
         console.log('Connected to the SQLite database.');
     }
 });
 
+// Define routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-const nowPlayingSql = `SELECT * FROM v_NowPlaying`;
-const nextPlayingSql = `SELECT * FROM v_NextPlaying`;
-
 app.get('/now-playing', (req, res) => {
-    db.get(nowPlayingSql, (err, row) => {
+    db.get('SELECT * FROM v_NowPlaying', (err, row) => {
         if (err) {
-            console.error('Error fetching now playing track:', err.message);
-            res.status(500).send(err.message);
+            console.error('Error fetching now playing data:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
         } else {
-            res.json(row);
+            res.json(row || {});
         }
     });
 });
 
 app.get('/next-playing', (req, res) => {
-    db.get(nextPlayingSql, (err, row) => {
+    db.get('SELECT * FROM v_NextPlaying', (err, row) => {
         if (err) {
-            console.error('Error fetching next playing track:', err.message);
-            res.status(500).send(err.message);
+            console.error('Error fetching next playing data:', err.message);
+            res.status(500).json({ error: 'Internal Server Error' });
         } else {
-            res.json(row);
+            res.json(row || {});
         }
     });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Start the server and handle errors
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+}).on('error', (err) => {
+    console.error('Error starting server:', err.message);
 });

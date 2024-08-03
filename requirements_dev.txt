@@ -14,3 +14,7 @@ npm install express sqlite3
 
 
 4 node server.js
+
+npm install -g pkg
+pkg .
+
