@@ -31,7 +31,7 @@ echo "git commit completed successfully."
 
 :: Push changes to the remote repository and check for errors
 echo "Running git push..."
-git push origin master
+git push origin main
 if %errorlevel% neq 0 (
     echo "Error: git push command failed."
     exit /b %errorlevel%
