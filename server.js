@@ -62,7 +62,7 @@ app.get('/next-playing', (req, res) => {
 
 // Start the server and handle errors
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on http://localhost:${port}/`);
 }).on('error', (err) => {
     console.error('Error starting server:', err.message);
 });
