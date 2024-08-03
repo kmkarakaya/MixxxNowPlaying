@@ -1,0 +1,16 @@
+Step 2: Set Up Node.js and Express
+Initialize npm: Open the terminal in VS Code and run:
+
+bash
+Kodu kopyala
+npm init -y
+This will create a package.json file.
+
+Install Express and SQLite3: Run the following commands to install Express (a web framework for Node.js) and SQLite3:
+
+bash
+Kodu kopyala
+npm install express sqlite3
+
+
+4 node server.js

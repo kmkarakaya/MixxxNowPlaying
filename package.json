@@ -1,0 +1,13 @@
+{
+  "name": "mixxx-now-playing",
+  "version": "1.0.0",
+  "description": "Web page to display now playing and next track from Mixxx DJ Software.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.2"
+  }
+}
