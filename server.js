@@ -12,10 +12,12 @@ app.use(express.static(__dirname));
 // Define the database file name
 const dbFileName = 'mixxxdb.sqlite';
 
-// Get database path from environment variable, append the file name if present
+// Get database path from environment variable, console argument, or default to local directory
 const dbPath = process.env.MIXXX_DB_PATH 
     ? path.join(process.env.MIXXX_DB_PATH, dbFileName) 
-    : path.join(__dirname, dbFileName);
+    : process.argv[2] 
+        ? path.join(process.argv[2], dbFileName) 
+        : path.join(__dirname, dbFileName);
 
 if (!dbPath) {
     console.error('No database path provided via environment variable.');
