@@ -1,20 +1,54 @@
-Step 2: Set Up Node.js and Express
-Initialize npm: Open the terminal in VS Code and run:
 
-bash
-Kodu kopyala
-npm init -y
-This will create a package.json file.
+Purpose: Build and package the web app into a Windows EXE using pkg.
 
-Install Express and SQLite3: Run the following commands to install Express (a web framework for Node.js) and SQLite3:
+Prerequisites
+- Node.js (use v14.x to match existing pkg target node14-win-x64). Verify with: node -v
+- npm (comes with Node)
+- On Windows: Visual Studio Build Tools (for rebuilding native modules like sqlite3) or the legacy windows-build-tools.
 
-bash
-Kodu kopyala
-npm install express sqlite3
+Steps
 
+1. Clone & open project
+   cd c:\Codes\MIXXX
 
-4 node server.js
+2. Install dependencies
+   npm install
 
-npm install -g pkg
-pkg .
+3. (Optional) If sqlite3 native addon is incompatible with target Node ABI, rebuild it:
+   - Ensure build tools are installed, then:
+     npm rebuild sqlite3 --build-from-source
+
+4. Test locally
+   node server.js
+   - Open http://localhost:3000 (or port in server.js) to confirm app runs.
+
+5. Install pkg (global) or use npx
+   npm install -g pkg
+   OR
+   use: npx pkg
+
+6. Build EXE (example targeting Node 14 Windows x64)
+   pkg . --targets node14-win-x64 --output mixxx-now-playing.exe
+   OR with npx:
+   npx pkg . --targets node14-win-x64 --output mixxx-now-playing.exe
+
+Notes & tips
+- package.json's "pkg" field should list assets (index.html, mixxxdb.sqlite, native/**/*, etc.). pkg will include declared assets.
+- If mixxxdb.sqlite should be external (editable after packaging), exclude it from assets and place the DB alongside the EXE; update server code to read a relative path.
+- Native .node binaries must match the target Node ABI. If rebuilding fails, install a matching sqlite3 prebuilt binary or align the Node target version with your installed Node runtime.
+- To target other Node versions / platforms, adjust --targets (e.g., node16-win-x64, node14-linux-x64).
+
+Troubleshooting
+- "Cannot find module sqlite3" after packaging: ensure sqlite3 is listed in package.json and included in pkg assets.
+- Build errors for sqlite3: install Visual Studio Build Tools, then run npm rebuild sqlite3 --build-from-source.
+- If EXE crashes at runtime, run it from cmd to view stderr output: mixxx-now-playing.exe
+
+Optional enhancements
+- Add a build script to package.json:
+  "scripts": {
+    "build:exe": "pkg . --targets node14-win-x64 --output mixxx-now-playing.exe"
+  }
+  Then run: npm run build:exe
+
+End.
 

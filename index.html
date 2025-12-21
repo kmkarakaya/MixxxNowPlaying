@@ -16,19 +16,25 @@
             background-repeat: no-repeat; /* Prevent repeating the image */
             height: 100vh; /* Full viewport height */
             display: flex;
+            flex-direction: column; /* stack header above content */
             overflow: hidden; /* Prevent horizontal scrolling */
         }
 
         .container {
             display: flex;
+            align-items: flex-start; /* align columns to the top */
             width: 100%;
-            height: 100%;
+            flex: 1 1 auto;
+            box-sizing: border-box;
+            gap: 20px;
+            padding: 0 20px 20px 20px;
         }
 
         #info {
             flex: 2; /* 2/3 of the space */
             padding: 20px;
-            background: rgba(0, 0, 0, 0.5); /* Translucent background */
+            background: rgba(0, 0, 0, 0.75); /* Darker translucent background for contrast */
+            box-shadow: inset 0 6px 18px rgba(0,0,0,0.6); /* subtle inner shadow */
             box-sizing: border-box; /* Include padding and border in width calculation */
             overflow: auto; /* Allow vertical scrolling if needed */
             position: relative; /* For absolute positioning of the dj image */
@@ -37,11 +43,13 @@
         #dj {
             flex: 1; /* 1/3 of the space */
             padding: 20px;
-            background: rgba(0, 0, 0, 0.5); /* Translucent background */
+            background: rgba(0, 0, 0, 0.75); /* Darker translucent background for contrast */
+            box-shadow: inset 0 6px 18px rgba(0,0,0,0.6); /* subtle inner shadow */
             box-sizing: border-box; /* Include padding and border in width calculation */
             display: flex;
+            flex-direction: column; /* stack image and name vertically */
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         #dj img {
@@ -51,16 +59,33 @@
             border-radius: 8px; /* Optional: Round the corners */
         }
 
+        #dj-name-display {
+            margin-top: 12px;
+            color: #ccc;
+            font-size: 1.05rem;
+            text-align: center;
+            opacity: 0.95;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: rgba(0, 0, 0, 0.7); /* Optional: Add a background with transparency to the table */
+            background: rgba(0, 0, 0, 0.6); /* slightly transparent table background */
             box-sizing: border-box; /* Include padding and border in width calculation */
             color: #ccc; /* Match text color of table with body */
         }
 
+        /* remove heavy borders; use soft separators */
         table, th, td {
-            border: 1px solid black;
+            border: none;
+        }
+
+        table thead tr {
+            border-bottom: 1px solid rgba(255,255,255,0.10); /* subtle header separator */
+        }
+
+        table tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.06); /* soft row separators */
         }
 
         th, td {
@@ -68,12 +93,41 @@
             text-align: left;
         }
 
+        /* Larger font for current and upcoming track data */
+        #current-track td, #upcoming-track td {
+            font-size: 1.5rem;
+            white-space: normal; /* allow wrapping */
+            overflow-wrap: anywhere; /* break long words if needed */
+            word-break: break-word; /* additional fallback for older browsers */
+            color: #e6e6e6; /* slightly lighter than body text for emphasis */
+        }
         th:nth-child(3), td:nth-child(3) {
             /* Ensure the Genre column (third column) is not hidden */
         }
 
         th:nth-child(3), td:nth-child(3) {
             /* Style the Genre column */
+        }
+
+        /* Column header styles: different font from song data (reduced size/padding) */
+        table thead th {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 1rem; /* reduced so it doesn't dominate */
+            font-weight: 700;
+            color: #bdbdbd; /* a little grey */
+            padding: 8px 8px; /* smaller padding */
+        }
+
+        /* Fixed small widths for Genre and Year columns */
+        table th:nth-child(3), table td:nth-child(3) {
+            width: 140px;
+            max-width: 140px;
+        }
+
+        table th:nth-child(4), table td:nth-child(4) {
+            width: 80px;
+            max-width: 80px;
+            text-align: right;
         }
 
         h1, h2 {
@@ -83,7 +137,8 @@
         #now-playing, #next-track {
             margin: 0; /* Remove default margin */
             padding: 10px;
-            background: rgba(0, 0, 0, 0.5); /* Add a translucent background to the sections */
+            background: rgba(0, 0, 0, 0.75); /* Darker translucent panels for contrast */
+            box-shadow: inset 0 6px 18px rgba(0,0,0,0.55); /* subtle inner shadow */
             border-radius: 8px; /* Optional: Round the corners */
             box-sizing: border-box; /* Include padding and border in width calculation */
         }
@@ -95,20 +150,30 @@
         #header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            justify-content: center; /* center the input across the page */
+            margin: 12px 0 20px 0;
+            width: 100%;
         }
 
-        #event-name {
-            width: 100%;
-            padding: 10px;
-            font-size: 2rem; /* Larger text size for the input box */
-            font-family: Arial, sans-serif; /* Match font type */
-            color: #ccc; /* Match text color with body */
-            background: transparent; /* Make the background transparent */
-            border: 1px solid #ccc; /* Keep the border for visibility */
-            border-radius: 4px;
-            text-align: center; /* Center text inside the input box */
+
+        /* Two-line header textarea */
+        #header-text {
+            width: 70%;
+            max-width: 900px;
+            padding: 10px 16px;
+            font-size: 1.6rem; /* readable first line */
+            font-family: Arial, sans-serif;
+            color: #ccc;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            text-align: center;
+            line-height: 1.2;
+            resize: none;
+            height: auto;
+            min-height: 3.6rem; /* approximately two lines */
+            max-height: 7.2rem; /* prevent runaway growth */
+            overflow-y: hidden; /* hide scrollbar */
         }
 
         .playing-gif {
@@ -123,11 +188,12 @@
     </style>
 </head>
 <body>
+    <div id="header">
+        <textarea id="header-text" aria-label="Milonga and DJ name">Milonga ...
+DJ. Murat Karakaya KMK</textarea>
+    </div>
     <div class="container">
         <div id="info">
-            <div id="header">
-                <input type="text" id="event-name" placeholder="Enter Milonga Name Here">
-            </div>
             <div id="now-playing">
                 <h2>Now Playing <img src="playing.gif" alt="Playing" class="playing-gif"></h2>
                 <table>
@@ -167,19 +233,24 @@
         </div>
         <div id="dj">
             <img src="dj.png" alt="DJ Photo">
+            <div id="dj-name-display">DJ. Murat Karakaya KMK</div>
         </div>
     </div>
     <script>
+        // Format displayed text: replace underscores with spaces
+        function formatText(text) {
+            return text ? String(text).replace(/_/g, ' ') : '';
+        }
         function fetchData() {
             fetch('/now-playing')
                 .then(response => response.json())
                 .then(data => {
                     const currentTrackRow = document.getElementById('current-track');
                     currentTrackRow.innerHTML = `
-                        <td>${data.Song || ''}</td>
-                        <td>${data.Orquestra || ''}</td>
-                        <td>${data.Genre || ''}</td>
-                        <td>${data.Year || ''}</td>
+                        <td>${formatText(data.Song)}</td>
+                        <td>${formatText(data.Orquestra)}</td>
+                        <td>${formatText(data.Genre)}</td>
+                        <td>${formatText(data.Year)}</td>
                     `;
                 })
                 .catch(error => {
@@ -192,10 +263,10 @@
                 .then(data => {
                     const nextTrackRow = document.getElementById('upcoming-track');
                     nextTrackRow.innerHTML = `
-                        <td>${data.Song || ''}</td>
-                        <td>${data.Orquestra || ''}</td>
-                        <td>${data.Genre || ''}</td>
-                        <td>${data.Year || ''}</td>
+                        <td>${formatText(data.Song)}</td>
+                        <td>${formatText(data.Orquestra)}</td>
+                        <td>${formatText(data.Genre)}</td>
+                        <td>${formatText(data.Year)}</td>
                     `;
                 })
                 .catch(error => {
@@ -206,6 +277,45 @@
 
         setInterval(fetchData, 5000); // Fetch every 5 seconds
         fetchData(); // Initial fetch
+
+        // Update DJ name display based on the second line of the header textarea
+        function updateDjDisplay() {
+            const ta = document.getElementById('header-text');
+            const disp = document.getElementById('dj-name-display');
+            const defaultDj = 'DJ. Murat Karakaya KMK';
+            if (!ta || !disp) return;
+            const lines = ta.value.split(/\r?\n/);
+            // find first non-empty line after the first line
+            let djFound = null;
+            for (let i = 1; i < lines.length; i++) {
+                const t = lines[i].trim();
+                if (t) { djFound = t; break; }
+            }
+            if (!djFound) {
+                // fallback: if only one non-empty line exists, keep default
+                djFound = defaultDj;
+            }
+            disp.textContent = djFound;
+        }
+
+        const headerTa = document.getElementById('header-text');
+        if (headerTa) {
+            // auto-resize textarea to content and hide scrollbar
+            function autoResizeTextarea(el) {
+                el.style.height = 'auto';
+                const newHeight = Math.min(el.scrollHeight, parseFloat(getComputedStyle(el).maxHeight));
+                el.style.height = newHeight + 'px';
+            }
+
+            headerTa.addEventListener('input', () => {
+                autoResizeTextarea(headerTa);
+                updateDjDisplay();
+            });
+
+            // initialize height and display
+            autoResizeTextarea(headerTa);
+            updateDjDisplay();
+        }
     </script>
 </body>
 </html>
