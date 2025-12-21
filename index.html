@@ -22,41 +22,32 @@
 
         .container {
             display: flex;
-            align-items: flex-start; /* align columns to the top */
+            align-items: stretch; /* stretch cards to same height */
             width: 100%;
             flex: 1 1 auto;
             box-sizing: border-box;
-            gap: 20px;
-            padding: 0 20px 20px 20px;
+            gap: 20px; /* consistent gutter between cards */
+            padding: 0 16px 8px 16px;
         }
 
-        #info {
-            flex: 2; /* 2/3 of the space */
-            padding: 8px 20px; /* reduce top padding so tables sit higher */
-            background: rgba(0, 0, 0, 0.75); /* Darker translucent background for contrast */
-            box-shadow: inset 0 6px 18px rgba(0,0,0,0.6); /* subtle inner shadow */
-            box-sizing: border-box; /* Include padding and border in width calculation */
-            overflow: auto; /* Allow vertical scrolling if needed */
-            position: relative; /* For absolute positioning of the dj image */
-        }
+        #info { display: contents; }
 
         #dj {
-            flex: 1; /* 1/3 of the space */
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.75); /* Darker translucent background for contrast */
-            box-shadow: inset 0 6px 18px rgba(0,0,0,0.6); /* subtle inner shadow */
-            box-sizing: border-box; /* Include padding and border in width calculation */
+            flex: 1 1 0;
             display: flex;
             flex-direction: column; /* stack image and name vertically */
             align-items: center;
             justify-content: flex-start;
+            overflow: hidden; /* keep image inside rounded corners */
         }
 
         #dj img {
-            max-width: 100%;
-            height: auto;
-            max-height: 100%; /* Ensure the image does not exceed container height */
-            border-radius: 8px; /* Optional: Round the corners */
+            width: 100%;
+            height: 100%;
+            max-height: 70vh; /* cap height to keep card balanced */
+            object-fit: cover;
+            display: block;
+            flex: 1 1 auto;
         }
 
         #dj-name-display {
@@ -67,39 +58,48 @@
             opacity: 0.95;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(0, 0, 0, 0.6); /* slightly transparent table background */
-            box-sizing: border-box; /* Include padding and border in width calculation */
-            color: #ccc; /* Match text color of table with body */
+        /* Card base styling for track and DJ panels and header */
+        .card {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.75);
+            box-shadow: inset 0 6px 18px rgba(0,0,0,0.55);
+            border-radius: 8px;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
-        /* remove heavy borders; use soft separators */
-        table, th, td {
-            border: none;
+        /* Cards (playing, next, dj) share equal widths */
+        .card-column {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
         }
 
-        table thead tr {
-            border-bottom: 1px solid rgba(255,255,255,0.10); /* subtle header separator */
+        /* Track cards content */
+        .track-lines {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            flex: 1 1 auto;
         }
 
-        table tbody tr {
-            border-bottom: 1px solid rgba(255,255,255,0.06); /* soft row separators */
+        .track-line {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
+        .track-line:last-child {
+            border-bottom: none;
         }
 
-        /* Larger font for current and upcoming track data */
-        #current-track td, #upcoming-track td {
-            font-size: 1.5rem;
-            white-space: normal; /* allow wrapping */
-            overflow-wrap: anywhere; /* break long words if needed */
-            word-break: break-word; /* additional fallback for older browsers */
-            color: #e6e6e6; /* slightly lighter than body text for emphasis */
+        /* Track rows: noticeable but smaller than headings */
+        #current-track, #upcoming-track {
+            font-size: 1.22rem; /* slightly smaller than before */
+            font-weight: 500;
+            color: #cfcfcf; /* slightly darker grey than titles */
         }
         th:nth-child(3), td:nth-child(3) {
             /* Ensure the Genre column (third column) is not hidden */
@@ -109,26 +109,7 @@
             /* Style the Genre column */
         }
 
-        /* Column header styles: different font from song data (reduced size/padding) */
-        table thead th {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 1rem; /* reduced so it doesn't dominate */
-            font-weight: 700;
-            color: #bdbdbd; /* a little grey */
-            padding: 8px 8px; /* smaller padding */
-        }
-
-        /* Fixed small widths for Genre and Year columns */
-        table th:nth-child(3), table td:nth-child(3) {
-            width: 140px;
-            max-width: 140px;
-        }
-
-        table th:nth-child(4), table td:nth-child(4) {
-            width: 80px;
-            max-width: 80px;
-            text-align: right;
-        }
+        /* (tables removed in favor of cards) */
 
         h1, h2 {
             color: #ccc; /* Ensure headers have the same text color as the rest of the page */
@@ -136,102 +117,84 @@
 
         #now-playing, #next-track {
             margin: 0; /* Remove default margin */
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.75); /* Darker translucent panels for contrast */
-            box-shadow: inset 0 6px 18px rgba(0,0,0,0.55); /* subtle inner shadow */
-            border-radius: 8px; /* Optional: Round the corners */
-            box-sizing: border-box; /* Include padding and border in width calculation */
-        }
-
-        #now-playing {
-            margin-bottom: 8px; /* Tighten space between tables so next track moves up */
         }
 
         #header {
             display: flex;
             align-items: center;
             justify-content: center; /* center the input across the page */
-            margin: 12px 0 20px 0;
+            margin: 4px 0 8px 0; /* even tighter vertical spacing */
             width: 100%;
         }
 
 
         /* Two-line header textarea */
         #header-text {
-            width: 70%;
+            width: 100%;
             max-width: 900px;
-            padding: 10px 16px;
-            font-size: 1.6rem; /* readable first line */
+            padding: 6px 12px; /* tighter padding */
+            font-size: 1.4rem; /* slightly smaller to fit */
             font-family: Arial, sans-serif;
             color: #ccc;
-            background: rgba(0,0,0,0.35);
-            border: 1px solid #ccc;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.25); /* translucent border (less visible than white) */
             border-radius: 6px;
             text-align: center;
-            line-height: 1.2;
+            line-height: 1.15;
             resize: none;
             height: auto;
-            min-height: 3.6rem; /* approximately two lines */
-            max-height: 7.2rem; /* prevent runaway growth */
+            min-height: 2.8rem; /* smaller two-line height */
+            max-height: 5.6rem; /* prevent runaway growth */
             overflow-y: hidden; /* hide scrollbar */
+            box-sizing: border-box;
         }
 
         .playing-gif {
-            height: 90px; /* Set a specific height for better visibility */
-            margin-left: 10px; /* Add some space between the text and the image */
+            height: 86px; /* balance between heading prominence and header tightness */
+            margin-left: 0;
+            margin-right: 10px; /* gap between image (left) and title text */
+        }
+
+        /* Emphasize panel headings (bigger than track text) */
+        #now-playing h2, #next-track h2 {
+            margin: 6px 6px 10px 6px; /* breathing room below title */
+            font-size: 1.6rem; /* slightly smaller, still larger than track text */
+            font-weight: 400; /* not bold */
+            color: #e6e6e6; /* light grey for titles */
+            line-height: 1;
+            min-height: 96px; /* keep both headings aligned even with the spinning image */
+            align-items: center;
+            gap: 8px;
         }
 
         h2 {
             display: flex;
             align-items: center;
         }
+
+        /* Stack cards on narrow screens */
+        @media (max-width: 900px) {
+            .tracks {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="header">
+    <div id="header" class="card">
         <textarea id="header-text" aria-label="Milonga and DJ name">Milonga ...
 DJ. Murat Karakaya KMK</textarea>
     </div>
     <div class="container">
-        <div id="info">
-            <div id="now-playing">
-                <h2>Now Playing <img src="playing.gif" alt="Playing" class="playing-gif"></h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Song</th>
-                            <th>Orquestra</th>
-                            <th>Genre</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="current-track">
-                            <td colspan="4">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div id="next-track">
-                <h2>Next Track</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Song</th>
-                            <th>Orquestra</th>
-                            <th>Genre</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="upcoming-track">
-                            <td colspan="4">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div id="now-playing" class="card card-column">
+            <h2><img src="playing.gif" alt="Playing" class="playing-gif">Playing</h2>
+            <div class="track-lines" id="current-track">Loading...</div>
         </div>
-        <div id="dj">
+        <div id="next-track" class="card card-column">
+            <h2>Next</h2>
+            <div class="track-lines" id="upcoming-track">Loading...</div>
+        </div>
+        <div id="dj" class="card card-column">
             <img src="dj.png" alt="DJ Photo">
             <div id="dj-name-display">DJ. Murat Karakaya KMK</div>
         </div>
@@ -247,15 +210,15 @@ DJ. Murat Karakaya KMK</textarea>
                 .then(data => {
                     const currentTrackRow = document.getElementById('current-track');
                     currentTrackRow.innerHTML = `
-                        <td>${formatText(data.Song)}</td>
-                        <td>${formatText(data.Orquestra)}</td>
-                        <td>${formatText(data.Genre)}</td>
-                        <td>${formatText(data.Year)}</td>
+                        <div class="track-line">${formatText(data.Song)}</div>
+                        <div class="track-line">${formatText(data.Orquestra)}</div>
+                        <div class="track-line">${formatText(data.Genre)}</div>
+                        <div class="track-line">${formatText(data.Year)}</div>
                     `;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    document.getElementById('current-track').innerHTML = '<td colspan="4">Error loading data</td>';
+                    document.getElementById('current-track').innerHTML = 'Error loading data';
                 });
 
             fetch('/next-playing')
@@ -263,15 +226,15 @@ DJ. Murat Karakaya KMK</textarea>
                 .then(data => {
                     const nextTrackRow = document.getElementById('upcoming-track');
                     nextTrackRow.innerHTML = `
-                        <td>${formatText(data.Song)}</td>
-                        <td>${formatText(data.Orquestra)}</td>
-                        <td>${formatText(data.Genre)}</td>
-                        <td>${formatText(data.Year)}</td>
+                        <div class="track-line">${formatText(data.Song)}</div>
+                        <div class="track-line">${formatText(data.Orquestra)}</div>
+                        <div class="track-line">${formatText(data.Genre)}</div>
+                        <div class="track-line">${formatText(data.Year)}</div>
                     `;
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    document.getElementById('upcoming-track').innerHTML = '<td colspan="4">Error loading data</td>';
+                    document.getElementById('upcoming-track').innerHTML = 'Error loading data';
                 });
         }
 
