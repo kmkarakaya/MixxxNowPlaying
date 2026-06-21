@@ -4,7 +4,8 @@
   "description": "Web page to display now playing and next track from Mixxx DJ Software.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build:exe": "pkg . --targets node14-win-x64 --output mixxx-now-playing.exe"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -14,6 +15,8 @@
   "pkg": {
     "assets": [
       "index.html",
+      "announcement.html",
+      "karekod.jpeg",
       "back.jpg",
       "dj.png",
       "playing.gif",
@@ -27,5 +30,8 @@
     "scripts": [
       "server.js"
     ]
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
   }
 }

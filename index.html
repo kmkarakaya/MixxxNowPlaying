@@ -20,6 +20,16 @@
             overflow: hidden; /* Prevent horizontal scrolling */
         }
 
+        .screen {
+            width: 100%;
+            height: 100%;
+            flex: 1 1 auto;
+        }
+
+        .screen[hidden] {
+            display: none;
+        }
+
         .container {
             display: flex;
             align-items: stretch; /* stretch cards to same height */
@@ -172,38 +182,73 @@
             align-items: center;
         }
 
+        #announcement-screen {
+            padding: 0;
+            background: #090909;
+        }
+
+        #announcement-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #090909;
+        }
+
         /* Stack cards on narrow screens */
         @media (max-width: 900px) {
-            .tracks {
+            .container {
                 flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <div id="header" class="card">
-        <textarea id="header-text" aria-label="Milonga and DJ name">Milonga ...
+    <div id="main-screen" class="screen">
+        <div id="header" class="card">
+            <textarea id="header-text" aria-label="Milonga and DJ name">Milonga ...
 DJ. Murat Karakaya KMK</textarea>
+        </div>
+        <div class="container">
+            <div id="now-playing" class="card card-column">
+                <h2><img src="playing.gif" alt="Playing" class="playing-gif">Playing</h2>
+                <div class="track-lines" id="current-track">Loading...</div>
+            </div>
+            <div id="next-track" class="card card-column">
+                <h2>Next</h2>
+                <div class="track-lines" id="upcoming-track">Loading...</div>
+            </div>
+            <div id="dj" class="card card-column">
+                <img src="dj.png" alt="DJ Photo">
+                <div id="dj-name-display">DJ. Murat Karakaya KMK</div>
+            </div>
+        </div>
     </div>
-    <div class="container">
-        <div id="now-playing" class="card card-column">
-            <h2><img src="playing.gif" alt="Playing" class="playing-gif">Playing</h2>
-            <div class="track-lines" id="current-track">Loading...</div>
-        </div>
-        <div id="next-track" class="card card-column">
-            <h2>Next</h2>
-            <div class="track-lines" id="upcoming-track">Loading...</div>
-        </div>
-        <div id="dj" class="card card-column">
-            <img src="dj.png" alt="DJ Photo">
-            <div id="dj-name-display">DJ. Murat Karakaya KMK</div>
-        </div>
+    <div id="announcement-screen" class="screen" hidden>
+        <iframe
+            id="announcement-frame"
+            src="/announcement.html"
+            title="Announcement screen"
+            loading="eager"
+            referrerpolicy="no-referrer"
+        ></iframe>
     </div>
     <script>
+        const MAIN_VIEW_DURATION_MS = 10 * 60 * 1000;
+        const ANNOUNCEMENT_VIEW_DURATION_MS = 2 * 60 * 1000;
+        const DATA_REFRESH_INTERVAL_MS = 5000;
+        const ANNOUNCEMENT_URL = '/announcement.html';
+
+        const mainScreen = document.getElementById('main-screen');
+        const announcementScreen = document.getElementById('announcement-screen');
+        const announcementFrame = document.getElementById('announcement-frame');
+        let rotationTimeoutId = null;
+
         // Format displayed text: replace underscores with spaces
         function formatText(text) {
             return text ? String(text).replace(/_/g, ' ') : '';
         }
+
         function fetchData() {
             fetch('/now-playing')
                 .then(response => response.json())
@@ -238,8 +283,34 @@ DJ. Murat Karakaya KMK</textarea>
                 });
         }
 
-        setInterval(fetchData, 5000); // Fetch every 5 seconds
-        fetchData(); // Initial fetch
+        function scheduleRotation(nextStep, durationMs) {
+            if (rotationTimeoutId) {
+                clearTimeout(rotationTimeoutId);
+            }
+
+            rotationTimeoutId = setTimeout(nextStep, durationMs);
+        }
+
+        function showMainScreen() {
+            mainScreen.hidden = false;
+            announcementScreen.hidden = true;
+            fetchData();
+            scheduleRotation(showAnnouncementScreen, MAIN_VIEW_DURATION_MS);
+        }
+
+        function showAnnouncementScreen() {
+            if (announcementFrame.src !== ANNOUNCEMENT_URL) {
+                announcementFrame.src = ANNOUNCEMENT_URL;
+            }
+
+            mainScreen.hidden = true;
+            announcementScreen.hidden = false;
+            scheduleRotation(showMainScreen, ANNOUNCEMENT_VIEW_DURATION_MS);
+        }
+
+        setInterval(fetchData, DATA_REFRESH_INTERVAL_MS);
+        fetchData();
+        showMainScreen();
 
         // Update DJ name display based on the second line of the header textarea
         function updateDjDisplay() {

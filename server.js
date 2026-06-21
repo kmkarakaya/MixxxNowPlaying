@@ -5,6 +5,8 @@ const sqlite3 = require('sqlite3').verbose(); // Include sqlite3
 
 const app = express();
 const port = process.env.PORT || 3001; // Port number
+const isPackaged = typeof process.pkg !== 'undefined';
+const runtimeDir = isPackaged ? path.dirname(process.execPath) : __dirname;
 
 // Serve static files (e.g., images, CSS) from the directory where server.js is located
 app.use(express.static(__dirname));
@@ -12,12 +14,33 @@ app.use(express.static(__dirname));
 // Define the database file name
 const dbFileName = 'mixxxdb.sqlite';
 
+function resolveDbPath() {
+    if (process.env.MIXXX_DB_PATH) {
+        return path.join(process.env.MIXXX_DB_PATH, dbFileName);
+    }
+
+    if (process.argv[2]) {
+        return path.join(process.argv[2], dbFileName);
+    }
+
+    const candidatePaths = [];
+
+    if (isPackaged && process.env.LOCALAPPDATA) {
+        candidatePaths.push(path.join(process.env.LOCALAPPDATA, 'Mixxx', dbFileName));
+    }
+
+    candidatePaths.push(path.join(runtimeDir, dbFileName));
+
+    if (!isPackaged) {
+        candidatePaths.push(path.join(__dirname, dbFileName));
+    }
+
+    const existingDbPath = candidatePaths.find((candidatePath) => fs.existsSync(candidatePath));
+    return existingDbPath || candidatePaths[0];
+}
+
 // Get database path from environment variable, console argument, or default to local directory
-const dbPath = process.env.MIXXX_DB_PATH 
-    ? path.join(process.env.MIXXX_DB_PATH, dbFileName) 
-    : process.argv[2] 
-        ? path.join(process.argv[2], dbFileName) 
-        : path.join(__dirname, dbFileName);
+const dbPath = resolveDbPath();
 
 if (!dbPath) {
     console.error('No database path provided via environment variable.');

@@ -20,7 +20,7 @@ Steps
 
 4. Test locally
    node server.js
-   - Open http://localhost:3000 (or port in server.js) to confirm app runs.
+   - Open http://localhost:3001 to confirm app runs.
 
 5. Install pkg (global) or use npx
    npm install -g pkg
